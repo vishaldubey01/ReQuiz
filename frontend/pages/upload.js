@@ -3,43 +3,61 @@ import DashboardTemplate from "../components/DashboardTemplate";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+
   return (
     <DashboardTemplate>
-      <h1>Upload files here</h1>
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl font-semibold text-gray-900">Upload</h1>
+      </div>
       <form>
         <div>
           <label
             htmlFor="title"
-            class="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700"
           >
             Title
           </label>
-          <div class="mt-1 relative rounded-md shadow-sm">
+          <div className="w-1/3 mt-1 relative rounded-md shadow-sm">
             <input
               type="text"
               onChange={(e) => setTitle(e.target.value)}
               name="title"
               id="title"
-              className="focus:ring-indigo-500 focus:border-indigo-500 block w-1/3 sm:text-sm border-gray-300 rounded-md"
+              value={title}
+              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
               placeholder="Title"
             />
           </div>
         </div>
-        <textarea
-          className="focus:ring-indigo-500 focus:border-indigo-500 block w-1/3 sm:text-sm border-gray-300 rounded-md"
-          id="upload-text"
-          name="w3review"
-          rows="4"
-          cols="45"
-        >
-          Upload any text here to generate a quiz from it
-        </textarea>
+        <br />
+        <div>
+          <label
+            htmlFor="upload-text"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Upload text
+          </label>
+          <div className="w-1/3 mt-1 relative rounded-md shadow-sm">
+            <textarea
+              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+              id="upload-text"
+              name="upload-text"
+              rows="4"
+              cols="45"
+              placeholder="Upload any text here to generate a quiz from it"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            ></textarea>
+          </div>
+        </div>
         <button
           type="submit"
           className="mt-4 flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Upload text
           <svg
+            className="ml-2 h-6 w-6"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
