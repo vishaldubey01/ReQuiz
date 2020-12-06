@@ -200,7 +200,7 @@ def add_text_row(text, userid):
     id = str(uuid.uuid1())
     authtoken = get_auth_token()
 
-    url = "https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com/api/graphql/fucknigel"
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
     
     
     headers = {
@@ -209,19 +209,22 @@ def add_text_row(text, userid):
     'Accept': 'application/json',
     'Connection': 'keep-alive',
     'DNT': '1',
-    'Origin': 'https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
     'x-cassandra-token': authtoken
     }
     response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: inserttext(\n    value: { id: \""+id+"\", text: \""+text+"\", userid: \""+text+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
     
 
     print(response.json())
+    retid = response.json()['data']['bruh']['value']['id']
+    print(retid)
+    return retid
 
-def add_question_row(question_content, answer, qtype, textid, rating):
+def add_question_row(question_content, answer, qtype, textid):
     id = str(uuid.uuid1())
     authtoken = get_auth_token()
 
-    url = "https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com/api/graphql/fucknigel"
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
     
     
     headers = {
@@ -230,15 +233,58 @@ def add_question_row(question_content, answer, qtype, textid, rating):
     'Accept': 'application/json',
     'Connection': 'keep-alive',
     'DNT': '1',
-    'Origin': 'https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
     'x-cassandra-token': authtoken
     }
-    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: insertquestions(\n    value: { id: \""+id+"\", question: \""+question_content+"\", answer: \""+answer+"\", rating: \""+str(rating)+"\", textid: \""+textid+"\", type: \""+qtype+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
+    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: insertquestions(\n    value: { id: \""+id+"\", question: \""+question_content+"\", answer: \""+answer+"\", rating: \""+str(1.00)+"\", textid: \""+textid+"\", type: \""+qtype+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
     
     print(response.json())
+    return response.json()
+
+def get_all_text_questions(textid):
+    authtoken = get_auth_token()
+
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+    
+    
+    headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
+    'x-cassandra-token': authtoken
+    }
+    responseQuestions = requests.request("POST", url, headers=headers, json={"query":"query {\n  questions(options:{limit: 10000}) {\n    values {\n      id\n      question\n      answer\n    textid\n    type\n    }\n  }\n}"})
+    responseTexts = requests.request("POST", url, headers=headers, json={"query":"query {\n  text(options:{limit: 10000}) {\n    values {\n      id\n      text\n      userid\n    }\n  }\n}"})
+
+    
+    questionRes = responseQuestions.json()
+    textRes = responseTexts.json()
+
+    questionsMatch = []
+    textMatch = {}
+
+    for question in questionRes['data']['questions']['values']:
+        if question['textid'] == textid:
+            questionsMatch.append(question)
+    
+    for text in textRes['data']['text']['values']:
+        if text['id'] == textid:
+            textMatch = text
+    
+    ret = {
+        "questions": questionsMatch,
+        "textInformation": textMatch
+    }
+    print(ret)
+    return ret
 
 
-#add_text_row("hello its vishal", "132342")
-add_question_row("What is a sample question?", "an example query", "free response", "23423", 0.91)
 
-#curl 'https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com/api/graphql/fucknigel' -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Connection: keep-alive' -H 'DNT: 1' -H 'Origin: https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com' -H 'x-cassandra-token: 4e27f5cf-d992-460b-9768-19cfe1d36bdd' --data-binary '{"query":"mutation {\n  bruh: inserttext(\n    value: { id: \"0d2aa48e-37ad-11eb-8853-acde48001122\", text: \"Ansh has a dig bick\", userid: \"54321\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"}' --compressed
+# THESE ARE TESTING RUNS:
+
+#get_all_text_questions("d6354fb8-37bd-11eb-8ef2-acde48001122")
+#text_id_returned = add_text_row("hello aslkdjfalksdjfklasd vishal", "1323423232")
+#add_question_row("What is a samp hi hello bye question?", "an example dmb query", "free response", text_id_returned)

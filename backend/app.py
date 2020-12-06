@@ -46,14 +46,16 @@ def get_mc_questions(text):
     return questions, corrects, types
 
 @app.route('/gen_questions', methods=['GET', 'POST']) #allow both GET and POST requests
-def gen_questions(url, text):
+def gen_questions(url, text, userid):
     mc_questions, mc_corrects, mc_types = get_mc_questions(text)
     free_questions, free_corrects, free_types = get_free_questions(text)
 
     textid = url
     # insert into text: text_id, text, userid
     # insert into questions: each generated id (autoinc), content, answer, 'multiple_choice', text_id, 5
-
+    # first add text to db
+    # ^ response includes an id like eda433e6-37bb-11eb-b96f-acde48001122
+    # add each question to db using add_question_row function and passing in the id above as textid parameter
 
     return questions, corrects, types
 
