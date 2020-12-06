@@ -3,9 +3,9 @@ import Link from "next/link";
 import { useUser } from "../utils/auth/useUser";
 
 export default function Navbar({ logo }) {
+  const { user, logout } = useUser();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const { user, logout } = useUser();
 
   return (
     <nav className="bg-gray-800">
@@ -85,17 +85,19 @@ export default function Navbar({ logo }) {
                     Home
                   </a>
                 </Link>
-                <Link href="/dashboard">
-                  <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    Dashboard
-                  </a>
-                </Link>
-                <Link href="about">
+                {user && (
+                  <Link href="/dashboard">
+                    <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      Dashboard
+                    </a>
+                  </Link>
+                )}
+                <Link href="/about">
                   <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                     About
                   </a>
                 </Link>
-                <Link href="contact">
+                <Link href="/contact">
                   <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                     Contact Us
                   </a>
@@ -193,7 +195,7 @@ export default function Navbar({ logo }) {
                     aria-orientation="vertical"
                     aria-labelledby="user-menu"
                   >
-                    <Link href="profile">
+                    <Link href="/profile">
                       <a
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         role="menuitem"
@@ -221,7 +223,7 @@ export default function Navbar({ logo }) {
               </div>
             ) : (
               <div>
-                <Link href="auth">
+                <Link href="/auth">
                   <a className="text-gray-200 text-md font-medium">
                     Login/Register
                   </a>
