@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MCQButton from "./MCQButton";
 
 export default function Question() {
   const [correct, setCorrect] = useState(undefined);
   const [disable, setDisable] = useState(false);
   const [selected, setSelected] = useState(-1);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(-1);
+  const [currentQuestionIndex, setcurrentQuestionIndex] = useState(0);
   var sprint = require("../data/questions.json");
+
+  useEffect(() => {
+    setCorrect(undefined);
+    setDisable(false);
+  }, [currentQuestionIndex, selected]);
+
+  useEffect(() => {
+    sprint[currentQuestionIndex].answer.map((answer, index) => {
+      if (answer.correct === "true") {
+        setCorrectAnswerIndex(index);
+      }
+    });
+  }, [correctAnswerIndex]);
 
   // Function to send a POST request to check the answer
   const checkAnswer = async () => {
-    sprint[0].answer.map((answer, index) => {
+    sprint[currentQuestionIndex].answer.map((answer, index) => {
       if (index === selected) {
         showCorrectModal();
       } else {
@@ -43,13 +58,13 @@ export default function Question() {
 
   return (
     <div>
-      <h1>{sprint[0].question}</h1>
+      <h1>{sprint[currentQuestionIndex].question}</h1>
       <form onSubmit={handleFormSubmit}>
-        {sprint[0].answer.map((answer, index) => {
+        {sprint[currentQuestionIndex].answer.map((answer, index) => {
           let correct1 = "default";
           // console.log("selected", selected);
           if (correct) {
-            if (index === 0) {
+            if (index == correctAnswerIndex) {
               correct1 = "correct";
             } else {
               correct1 = "incorrect";
@@ -83,9 +98,12 @@ export default function Question() {
         ) : (
           <button
             type="button"
-            // onClick={nextQuestion}
+            onClick={() => {
+              setSelected(-1);
+              setcurrentQuestionIndex(currentQuestionIndex + 1);
+            }}
             className={`${
-              correct === "correct" ? "bg-green-500" : "bg-red-500"
+              correct == "correct" ? "bg-green-500" : "bg-indigo-500"
             } w-full block text-white max-w-md my-4 font-medium mx-auto rounded-full h-10 uppercase leading-relaxed`}
           >
             Next question

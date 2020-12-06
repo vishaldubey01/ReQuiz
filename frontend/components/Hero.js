@@ -374,7 +374,7 @@ export default function Hero() {
         <div className="container mx-auto flex justify-center md:-mt-56 -mt-20 sm:-mt-40">
           <div className="relative sm:w-2/3 w-11/12">
             <img
-              src="https://perfectib.com/demo.png"
+              src="https://www.elegantthemes.com/blog/wp-content/uploads/2019/04/buzzfeed-quiz.jpg"
               alt=""
               className="m-auto"
             />
