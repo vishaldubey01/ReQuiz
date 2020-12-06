@@ -337,6 +337,34 @@ def add_question_row(question_content, answer, qtype, textid):
     print(response.json())
     return response.json()
 
+def get_all_text(userid):
+    authtoken = get_auth_token()
+
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+
+
+    headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
+    'x-cassandra-token': authtoken
+    }
+    responseTexts = requests.request("POST", url, headers=headers, json={"query":"query {\n  text(options:{limit: 10000}) {\n    values {\n      id\n      text\n      userid\n    }\n  }\n}"})
+
+    textRes = responseTexts.json()
+
+    textMatches = []
+
+    for text in textRes['data']['text']['values']:
+        if text['userid'] == userid:
+            textMatches.append(text)
+
+    print(textMatches)
+    return textMatches
+
 def get_all_text_questions(textid):
     authtoken = get_auth_token()
 
@@ -352,8 +380,8 @@ def get_all_text_questions(textid):
     'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
     'x-cassandra-token': authtoken
     }
-    responseQuestions = requests.request("POST", url, headers=headers, json={"query":"query {\n  questions(options:{limit: 10000}) {\n    values {\n      id\n      question\n      answer\n    textid\n    type\n    }\n  }\n}"})
-    responseTexts = requests.request("POST", url, headers=headers, json={"query":"query {\n  text(options:{limit: 10000}) {\n    values {\n      id\n      text\n      userid\n    }\n  }\n}"})
+    responseQuestions = requests.request("POST", url, headers=headers, json={"query":"query {\n  questions(options:{limit: 10000}) {\n    values {\n      id\n      question_content\n      answer\n     type\n     textid\n }\n  }\n}"})
+    responseTexts = requests.request("POST", url, headers=headers, json={"query":"query {\n  text(options:{limit: 10000}) {\n    values {\n      id\n      title\n      userid\n    }\n  }\n}"})
 
 
     questionRes = responseQuestions.json()
@@ -377,7 +405,7 @@ def get_all_text_questions(textid):
     print(ret)
     return ret
 
-
+get_all_text('ramisbahi')
 #add_session_row('rami', 'asdf', ['as', 'bs', 'qr'])
 # THESE ARE TESTING RUNS:
 #create_sessions_table()
