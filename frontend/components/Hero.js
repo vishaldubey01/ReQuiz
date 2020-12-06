@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function Hero() {
   return (
     <div>
-      <div class="w-full px-6">
-        <div class="mt-8 relative rounded-lg bg-purple-700 container mx-auto flex flex-col items-center pt-12 sm:pt-24 pb-24 sm:pb-32 md:pb-48 lg:pb-56 xl:pb-64">
+      <div className="w-full px-6">
+        <div className="mt-8 relative rounded-lg bg-purple-700 container mx-auto flex flex-col items-center pt-12 sm:pt-24 pb-24 sm:pb-32 md:pb-48 lg:pb-56 xl:pb-64">
           <svg
-            class="mr-2 lg:mr-12 mt-2 lg:mt-12 absolute right-0 top-0"
+            className="mr-2 lg:mr-12 mt-2 lg:mt-12 absolute right-0 top-0"
             width="104px"
             height="95px"
             viewBox="0 0 104 95"
@@ -17,9 +17,9 @@ export default function Hero() {
             <g
               id="Work-in-Progress"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
               opacity="0.122837612"
             >
               <g
@@ -180,7 +180,7 @@ export default function Hero() {
             </g>
           </svg>
           <svg
-            class="ml-2 lg:ml-12 mb-2 lg:mb-12 absolute bottom-0 left-0"
+            className="ml-2 lg:ml-12 mb-2 lg:mb-12 absolute bottom-0 left-0"
             width="104px"
             height="95px"
             viewBox="0 0 104 95"
@@ -191,9 +191,9 @@ export default function Hero() {
             <g
               id="Work-in-Progress"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
               opacity="0.122837612"
             >
               <g transform="translate(-206.000000, -596.000000)" fill="#FFFFFF">
@@ -353,27 +353,31 @@ export default function Hero() {
               </g>
             </g>
           </svg>
-          <div class="w-11/12 sm:w-2/3 mb-5 sm:mb-10">
-            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-center text-white font-bold leading-tight">
+          <div className="w-11/12 sm:w-2/3 mb-5 sm:mb-10">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-center text-white font-bold leading-tight">
               Instantly generate quizzes from what you read online!
             </h1>
           </div>
-          <div class="flex justify-center items-center mb-10 sm:mb-20">
+          <div className="flex justify-center items-center mb-10 sm:mb-20">
             <Link href="/dashboard">
-              <a class="bg-white transition duration-150 ease-in-out focus:outline-none hover:bg-gray-100 rounded text-indigo-700 px-4 sm:px-8 py-1 sm:py-3 text-sm">
+              <a className="bg-white transition duration-150 ease-in-out focus:outline-none hover:bg-gray-100 rounded text-indigo-700 px-4 sm:px-8 py-1 sm:py-3 text-sm">
                 Get Started
               </a>
             </Link>
             <Link href="/about">
-              <a class="ml-3 sm:ml-6 bg-transparent transition duration-150 ease-in-out focus:outline-none hover:bg-purple-800 rounded border border-white text-white px-4 sm:px-8 py-1 sm:py-3 text-sm">
+              <a className="ml-3 sm:ml-6 bg-transparent transition duration-150 ease-in-out focus:outline-none hover:bg-purple-800 rounded border border-white text-white px-4 sm:px-8 py-1 sm:py-3 text-sm">
                 Learn More
               </a>
             </Link>
           </div>
         </div>
-        <div class="container mx-auto flex justify-center md:-mt-56 -mt-20 sm:-mt-40">
-          <div class="relative sm:w-2/3 w-11/12">
-            <img src="https://perfectib.com/demo.png" alt="" class="m-auto" />
+        <div className="container mx-auto flex justify-center md:-mt-56 -mt-20 sm:-mt-40">
+          <div className="relative sm:w-2/3 w-11/12">
+            <img
+              src="https://perfectib.com/demo.png"
+              alt=""
+              className="m-auto"
+            />
           </div>
         </div>
       </div>
