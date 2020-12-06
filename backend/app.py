@@ -71,11 +71,7 @@ def gen_questions():
     mc_questions = json.loads(response.text)
 
     mc_corrects = []
-    for question in mc_questions:
-        for answer in question['answer']:
-            if answer['correct']:
-                mc_corrects.append(answer['answer'])
-                break
+
 
     #free_questions, free_corrects, free_types = get_free_questions(text)
 
@@ -83,15 +79,22 @@ def gen_questions():
     # insert into text: text_id, text, userid
     # insert into questions: each generated id (autoinc), content, answåår, 'multiple_choice', text_id, 5
 
+
     textid = add_text_row(title, userid)
     print('text id', textid)
 
+    for question in mc_questions:
+
+        qtype = 'multiple_choice'
+        add_question_row(question, "NAH", qtype, textid)
+
+'''
     for i in range(len(mc_questions)):
         question_content = mc_questions[i]['question']
         question_content = question_content[0].upper() + question_content[1:] # capitalize
         answer = mc_corrects[i]
-        qtype = 'multiple_choice'
         add_question_row(question_content, answer, qtype, textid)
+'''
 
     # first add text to db
     # ^ response includes an id like eda433e6-37bb-11eb-b96f-acde48001122
@@ -103,6 +106,7 @@ with open('question_generator/articles/innovate.txt') as f:
     print(text)
     gen_questions(text, 'ramisbahi')
 '''
+
 
 def gensession(textid):
     # select 10 questions with textid
@@ -118,6 +122,7 @@ def gensession(textid):
         questionids.append(question['id'])
 
     add_session_row(sessionid, userid, textid, questionids)
+    return sessionid
 
 def availablesessions(userid):
     #get_all_text

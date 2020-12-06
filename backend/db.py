@@ -73,6 +73,11 @@ def create_text_table():
                 "name":"userid",
                 "typeDefinition":"text",
                 "static":False
+            },
+            {
+                "name":"date",
+                "typeDefinition":"timestamp",
+                "static":False
             }
         ],
         "primaryKey": {
@@ -405,7 +410,8 @@ def get_all_text_questions(textid):
     print(ret)
     return ret
 
-get_all_text('ramisbahi')
+#get_all_text('hi')
+create_text_table()
 #add_session_row('rami', 'asdf', ['as', 'bs', 'qr'])
 # THESE ARE TESTING RUNS:
 #create_sessions_table()
