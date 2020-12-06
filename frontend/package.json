@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/ui": "^0.7.2",
     "autoprefixer": "^10.0.4",
     "next": "10.0.3",
     "postcss": "^8.1.14",
