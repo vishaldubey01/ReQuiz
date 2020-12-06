@@ -378,7 +378,7 @@ def get_all_text_questions(textid):
     return ret
 
 
-add_session_row('rami', 'asdf', ['as', 'bs', 'qr'])
+#add_session_row('rami', 'asdf', ['as', 'bs', 'qr'])
 # THESE ARE TESTING RUNS:
 #create_sessions_table()
 #create_interactions_table()

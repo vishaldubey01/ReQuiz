@@ -1,9 +1,8 @@
 #!flask/bin/python
 from flask import Flask, request, jsonify
 from pipelines import pipeline
-from question_generator.run_qg import get_questions
 import db
-from db import add_text_row, add_question_row, get_all_text_questions
+from db import add_text_row, add_question_row, get_all_text_questions, add_session_row, add_interaction_row
 import requests
 import json
 import random
@@ -86,10 +85,12 @@ def gen_questions(text, title, userid):
     # ^ response includes an id like eda433e6-37bb-11eb-b96f-acde48001122
     # add each question to db using add_question_row function and passing in the id above as textid parameter
 
+'''
 with open('question_generator/articles/innovate.txt') as f:
     text = f.read()
     print(text)
     gen_questions(text, 'ramisbahi')
+'''
 
 def gensession(textid):
     # select 10 questions with textid
