@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import requests
 import json
 import uuid
+from datetime import datetime
 
 load_dotenv()
 
@@ -64,7 +65,7 @@ def create_text_table():
                 "static":False
             },
             {
-                "name":"text",
+                "name":"title",
                 "typeDefinition":"text",
                 "static":False
             },
@@ -90,13 +91,63 @@ def create_text_table():
 
     print(response.json())
 
+def create_interactions_table():
+    authtoken = get_auth_token()
+
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/rest/v1/keyspaces/"+ASTRA_DB_KEYSPACE+"/tables"
+    payload={
+        "name": "interactions",
+        "ifNotExists":True,
+        "columnDefinitions": [
+            {
+                "name":"id",
+                "typeDefinition":"uuid",
+                "static":False
+            },
+            {
+                "name":"questionid",
+                "typeDefinition":"text",
+                "static":False
+            },
+            {
+                "name":"sessionid",
+                "typeDefinition":"text",
+                "static":False
+            },
+            {
+                "name":"user_response",
+                "typeDefinition":"text",
+                "static":False
+            },
+            {
+                "name":"score",
+                "typeDefinition":"int",
+                "static":False
+            }
+        ],
+        "primaryKey": {
+            "partitionKey": ["id"]
+        },
+        "tableOptions": {
+            "defaultTimeToLive": 0
+        }
+    }
+    headers = {
+    'Content-Type': 'application/json',
+    'x-cassandra-token': authtoken
+    }
+
+    response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+
+    print(response.json())
+
 def create_sessions_table():
     authtoken = get_auth_token()
 
     url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/rest/v1/keyspaces/"+ASTRA_DB_KEYSPACE+"/tables"
     payload={
         "name": "sessions",
-        "ifNotExists":True,
+        "ifNotExists":False,
         "columnDefinitions": [
             {
                 "name":"id",
@@ -114,13 +165,13 @@ def create_sessions_table():
                 "static":False
             },
             {
-                "name":"lastdate",
+                "name":"date",
                 "typeDefinition":"timestamp",
                 "static":False
             },
             {
                 "name":"questionids",
-                "typeDefinition":"set<text>",
+                "typeDefinition":"list<text>",
                 "static":False
             }
         ],
@@ -196,7 +247,7 @@ def create_questions_table():
 
     print(response.json())
 
-def add_text_row(text, userid):
+def add_text_row(title, userid):
     id = str(uuid.uuid1())
     authtoken = get_auth_token()
 
@@ -213,13 +264,57 @@ def add_text_row(text, userid):
     'x-cassandra-token': authtoken
     }
     text = "hi" # why do we need to store text?
-    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: inserttext(\n    value: { id: \""+id+"\", text: \""+text+"\", userid: \""+text+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
+    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: inserttext(\n    value: { id: \""+id+"\", text: \""+title+"\", userid: \""+text+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
 
 
     print(response.json())
     retid = response.json()['data']['bruh']['value']['id']
     print(retid)
     return retid
+
+def add_interaction_row(questionid, sessionid):
+    # generate # IDEA:
+    id = str(uuid.uuid1())
+
+    authtoken = get_auth_token()
+
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+
+    headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
+    'x-cassandra-token': authtoken
+    }
+
+    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: insertinteractions(\n    value: { id: \""+id+"\", questionid: \""+questionid+"\", sessionid: \""+sessionid+"\", user_response: \"NULL\", score: \"-1\"}\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
+
+def add_session_row(sessionid, userid, textid, questionids):
+    # generate # IDEA:
+    id = sessionid
+
+    authtoken = get_auth_token()
+
+    curr_date = datetime.today().strftime('%Y-%m-%d')
+
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+
+    headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
+    'x-cassandra-token': authtoken
+    }
+
+    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: insertsessions(\n    value: { id: \""+id+"\", userid: \""+userid+"\", textid: \""+textid+"\", date: \""+curr_date+"\", questionids: \"" + str(questionids) + "\"}\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
+    print(response.json())
+    return response.json()
 
 def add_question_row(question_content, answer, qtype, textid):
     id = str(uuid.uuid1())
@@ -283,9 +378,11 @@ def get_all_text_questions(textid):
     return ret
 
 
-
+add_session_row('rami', 'asdf', ['as', 'bs', 'qr'])
 # THESE ARE TESTING RUNS:
-get_all_text_questions("7aa65814-37d5-11eb-9df7-acde48001122")
+#create_sessions_table()
+#create_interactions_table()
+#get_all_text_questions("7aa65814-37d5-11eb-9df7-acde48001122")
 #get_all_text_questions("d6354fb8-37bd-11eb-8ef2-acde48001122")
 #get_all_text_questions("91fc7528-37c8-11eb-a809-acde48001122")
 #get_all_text_questions("bf679b14-37c8-11eb-a614-acde48001122")
