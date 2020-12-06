@@ -196,30 +196,98 @@ def create_questions_table():
 
     print(response.json())
 
-def add_text_row(id, text, userid):
+def add_text_row(text, userid):
+    id = str(uuid.uuid1())
     authtoken = get_auth_token()
 
-    url = "https://1122957d-b459-4289-ae47-61e396ead93e-us-east1.apps.astra.datastax.com/api/graphql/fucknigel"
-    payload={
-        "query": "mutation {book: inserttext(data:{id: \""+id+"\", text: \""+text+"\", userid: \""+userid+"\"} options: { consistency: LOCAL_QUORUM }){value {id}}}"
-    }
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+
+
     headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
     'x-cassandra-token': authtoken
     }
+    text = "hi" # why do we need to store text?
+    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: inserttext(\n    value: { id: \""+id+"\", text: \""+text+"\", userid: \""+text+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
 
-    response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
 
     print(response.json())
+    retid = response.json()['data']['bruh']['value']['id']
+    print(retid)
+    return retid
 
-# curl --request POST \
-#   --url https://$ASTRA_CLUSTER_ID-$ASTRA_CLUSTER_REGION.apps.astra.datastax.com/api/graphql/{keyspaceName} \
-#   --header 'accept: application/json' \
-#   --header 'content-type: application/json' \
-#   --header 'x-cassandra-request-id: {unique-UUID}' \
-#   --header "x-cassandra-token: $ASTRA_AUTHORIZATION_TOKEN" \
-#   --data-raw '{"query":"mutation {objectName: insertName(data:{columnName1:\"value1 A1\" columnName2:\"value2 A.\"columnName3: \"value3\" columnName4: \"value1\"}){value {columnName1 columnName2 columnName3 columnName4}}}","variables":{}}'
+def add_question_row(question_content, answer, qtype, textid):
+    id = str(uuid.uuid1())
+    authtoken = get_auth_token()
 
-ia = str(uuid.uuid1())
-print("ID: "+ia)
-add_text_row(ia, "hello ansh", "132342")
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+
+
+    headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
+    'x-cassandra-token': authtoken
+    }
+    response = requests.request("POST", url, headers=headers, json={"query":"mutation {\n  bruh: insertquestions(\n    value: { id: \""+id+"\", question: \""+question_content+"\", answer: \""+answer+"\", rating: \""+str(1.00)+"\", textid: \""+textid+"\", type: \""+qtype+"\" }\n    options: { consistency: LOCAL_QUORUM }\n  ) {\n    value {\n      id\n    }\n  }\n}\n"})
+
+    print(response.json())
+    return response.json()
+
+def get_all_text_questions(textid):
+    authtoken = get_auth_token()
+
+    url = "https://"+ASTRA_CLUSTER_ID+"-"+ASTRA_CLUSTER_REGION+".apps.astra.datastax.com/api/graphql/fucknigel"
+
+
+    headers = {
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'Origin': 'https://'+ASTRA_CLUSTER_ID+'-'+ASTRA_CLUSTER_REGION+'.apps.astra.datastax.com',
+    'x-cassandra-token': authtoken
+    }
+    responseQuestions = requests.request("POST", url, headers=headers, json={"query":"query {\n  questions(options:{limit: 10000}) {\n    values {\n      id\n      question\n      answer\n    textid\n    type\n    }\n  }\n}"})
+    responseTexts = requests.request("POST", url, headers=headers, json={"query":"query {\n  text(options:{limit: 10000}) {\n    values {\n      id\n      text\n      userid\n    }\n  }\n}"})
+
+
+    questionRes = responseQuestions.json()
+    textRes = responseTexts.json()
+
+    questionsMatch = []
+    textMatch = {}
+
+    for question in questionRes['data']['questions']['values']:
+        if question['textid'] == textid:
+            questionsMatch.append(question)
+
+    for text in textRes['data']['text']['values']:
+        if text['id'] == textid:
+            textMatch = text
+
+    ret = {
+        "questions": questionsMatch,
+        "textInformation": textMatch
+    }
+    print(ret)
+    return ret
+
+
+
+# THESE ARE TESTING RUNS:
+get_all_text_questions("7aa65814-37d5-11eb-9df7-acde48001122")
+#get_all_text_questions("d6354fb8-37bd-11eb-8ef2-acde48001122")
+#get_all_text_questions("91fc7528-37c8-11eb-a809-acde48001122")
+#get_all_text_questions("bf679b14-37c8-11eb-a614-acde48001122")
+#text_id_returned = add_text_row("I'm a cool guy", "69")
+#add_question_row("What is a sam?", "an example dmb query", "free response", text_id_returned)

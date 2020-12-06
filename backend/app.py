@@ -1,8 +1,11 @@
 #!flask/bin/python
 from flask import Flask, request, jsonify
 from pipelines import pipeline
-#from question_generator.run_qg import get_questions
+from question_generator.run_qg import get_questions
 import db
+from db import add_text_row, add_question_row, get_all_text_questions
+import requests
+import json
 
 #nlp = pipeline("question-generation", model="valhalla/t5-base-qg-hl", qg_format="prepend")
 
@@ -14,9 +17,9 @@ app = Flask(__name__)
 def index():
     return "Hello, World!"
 
-
+'''
 def get_free_questions(text):
-    text = ''.join([i if ord(i) < 128 else ' ' for i in text])
+    #text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     questions = nlp(text)
     corrects = []
 
@@ -25,8 +28,9 @@ def get_free_questions(text):
     types = ['free_response'] * len(questions)
     return questions, corrects, types
 
+
 def get_mc_questions(text):
-    text = ''.join([i if ord(i) < 128 else ' ' for i in text])
+    #text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     questions = get_questions(None,
         text,
         num_questions=100,
@@ -41,25 +45,53 @@ def get_mc_questions(text):
                 break
     types = ["multiple_choice"] * len(questions)
 
-
-
-    return questions, corrects, types
+    return questions
+'''
 
 @app.route('/gen_questions', methods=['GET', 'POST']) #allow both GET and POST requests
-def gen_questions(url, text):
-    mc_questions, mc_corrects, mc_types = get_mc_questions(text)
-    free_questions, free_corrects, free_types = get_free_questions(text)
+def gen_questions(text, userid):
+    text = ''.join([i if ord(i) < 128 else ' ' for i in text])
+    mc_url = 'https://us-central1-duke-classes-285719.cloudfunctions.net/get_mc_questions'
+    response = requests.post(mc_url, json={"text" : text})
+    print(response)
+    print(response.text)
+    mc_questions = json.loads(response.text)
 
-    textid = url
+    mc_corrects = []
+    for question in mc_questions:
+        for answer in question['answer']:
+            if answer['correct']:
+                mc_corrects.append(answer['answer'])
+                break
+
+    #free_questions, free_corrects, free_types = get_free_questions(text)
+
+    #textid = url
     # insert into text: text_id, text, userid
-    # insert into questions: each generated id (autoinc), content, answer, 'multiple_choice', text_id, 5
+    # insert into questions: each generated id (autoinc), content, answåår, 'multiple_choice', text_id, 5
 
+    textid = add_text_row(text, userid)
+    print('text id', textid)
 
-    return questions, corrects, types
+    for i in range(len(mc_questions)):
+        question_content = mc_questions[i]['question']
+        question_content = question_content[0].upper() + question_content[1:] # capitalize
+        answer = mc_corrects[i]
+        qtype = 'multiple_choice'
+        add_question_row(question_content, answer, qtype, textid)
+
+    # first add text to db
+    # ^ response includes an id like eda433e6-37bb-11eb-b96f-acde48001122
+    # add each question to db using add_question_row function and passing in the id above as textid parameter
+
+with open('question_generator/articles/innovate.txt') as f:
+    text = f.read()
+    print(text)
+    gen_questions(text, 'ramisbahi')
 
 def gensession(textid):
     # select 10 questions with textid
-    pass
+    questions = get_all_text_questions(textid)
 
 def answer(textid, questionid, useranswer):
     # select answer where id = question_id
@@ -77,6 +109,7 @@ def sessionhistory(userid):
     # select sessions with user id
     for session in sessions:
         # select interactions with session id =
+        continue
 
 
 # #test questions
