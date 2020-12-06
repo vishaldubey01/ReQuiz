@@ -1,21 +1,12 @@
-import Head from "next/head";
 import { useState } from "react";
 import Footer from "../components/footer";
 import Navbar from "../components/Navbar";
-import styles from "../styles/Home.module.css";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>ReQuiz</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
+    <div>
       <main className="">
         <div className="h-screen flex overflow-hidden bg-gray-100">
           {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}
