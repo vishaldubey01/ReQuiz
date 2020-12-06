@@ -107,6 +107,10 @@ def gensession(textid):
 
     add_session_row(sessionid, userid, textid, questionids)
 
+def availablesessions(userid):
+    #get_all_text
+    pass
+
 
 def answer(textid, questionid, useranswer):
     # select answer where id = question_id
