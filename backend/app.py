@@ -1,6 +1,5 @@
 #!flask/bin/python
-from flask import Flask, request, jsonify
-from pipelines import pipeline
+from flask import Flask, request, jsonify, abort
 import db
 from db import add_text_row, add_question_row, get_all_text_questions, add_session_row, add_interaction_row
 import requests
@@ -8,7 +7,6 @@ import json
 import random
 import uuid
 
-#nlp = pipeline("question-generation", model="valhalla/t5-base-qg-hl", qg_format="prepend")
 
 app = Flask(__name__)
 
@@ -64,7 +62,7 @@ def gen_questions():
     text = data['text']
     userid = data['userid']
     title = data['title']
-    
+
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     mc_url = 'https://us-central1-duke-classes-285719.cloudfunctions.net/get_mc_questions'
     response = requests.post(mc_url, json={"text" : text})
