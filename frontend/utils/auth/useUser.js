@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import initFirebase from '../auth/initFirebase'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import firebase from "firebase/app";
+import "firebase/auth";
+import initFirebase from "../auth/initFirebase";
 import {
   removeUserCookie,
   setUserCookie,
   getUserFromCookie,
-} from './userCookies'
-import { mapUserData } from './mapUserData'
+} from "./userCookies";
+import { mapUserData } from "./mapUserData";
 
-initFirebase()
+initFirebase();
 
 const useUser = () => {
-  const [user, setUser] = useState()
-  const router = useRouter()
+  const [user, setUser] = useState();
+  const router = useRouter();
 
   const logout = async () => {
     return firebase
@@ -22,12 +22,12 @@ const useUser = () => {
       .signOut()
       .then(() => {
         // Sign-out successful.
-        router.push('/auth')
+        router.push("/");
       })
       .catch((e) => {
-        console.error(e)
-      })
-  }
+        console.error(e);
+      });
+  };
 
   useEffect(() => {
     // Firebase updates the id token every hour, this
@@ -37,29 +37,29 @@ const useUser = () => {
       .auth()
       .onIdTokenChanged(async (user) => {
         if (user) {
-          const userData = await mapUserData(user)
-          setUserCookie(userData)
-          setUser(userData)
+          const userData = await mapUserData(user);
+          setUserCookie(userData);
+          setUser(userData);
         } else {
-          removeUserCookie()
-          setUser()
+          removeUserCookie();
+          setUser();
         }
-      })
+      });
 
-    const userFromCookie = getUserFromCookie()
+    const userFromCookie = getUserFromCookie();
     if (!userFromCookie) {
-      router.push('/')
-      return
+      router.push("/");
+      return;
     }
-    setUser(userFromCookie)
+    setUser(userFromCookie);
 
     return () => {
-      cancelAuthListener()
-    }
+      cancelAuthListener();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
-  return { user, logout }
-}
+  return { user, logout };
+};
 
-export { useUser }
+export { useUser };
