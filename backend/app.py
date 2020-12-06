@@ -77,6 +77,7 @@ def sessionhistory(userid):
     # select sessions with user id
     for session in sessions:
         # select interactions with session id =
+        continue
 
 
 # #test questions
