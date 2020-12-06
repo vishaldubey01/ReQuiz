@@ -1,13 +1,12 @@
 #!flask/bin/python
-from flask import Flask, request, jsonify
-from pipelines import pipeline
-from question_generator.run_qg import get_questions
+from flask import Flask, request, jsonify, abort
 import db
-from db import add_text_row, add_question_row, get_all_text_questions
+from db import add_text_row, add_question_row, get_all_text_questions, add_session_row, add_interaction_row
 import requests
 import json
+import random
+import uuid
 
-#nlp = pipeline("question-generation", model="valhalla/t5-base-qg-hl", qg_format="prepend")
 
 app = Flask(__name__)
 
@@ -48,8 +47,22 @@ def get_mc_questions(text):
     return questions
 '''
 
-@app.route('/gen_questions', methods=['GET', 'POST']) #allow both GET and POST requests
-def gen_questions(text, userid):
+@app.route('/gen_questions', methods=['POST']) #allow both GET and POST requests
+def gen_questions():
+    field_vals = ['userid','text','title']
+    data = {}
+    if not request.json:
+        abort(404)
+    else:
+        for field in field_vals:
+            if field not in request.json:
+                abort(404)
+            else:
+                data[field] = request.json[field]
+    text = data['text']
+    userid = data['userid']
+    title = data['title']
+
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     mc_url = 'https://us-central1-duke-classes-285719.cloudfunctions.net/get_mc_questions'
     response = requests.post(mc_url, json={"text" : text})
@@ -70,7 +83,7 @@ def gen_questions(text, userid):
     # insert into text: text_id, text, userid
     # insert into questions: each generated id (autoinc), content, answåår, 'multiple_choice', text_id, 5
 
-    textid = add_text_row(text, userid)
+    textid = add_text_row(title, userid)
     print('text id', textid)
 
     for i in range(len(mc_questions)):
@@ -84,14 +97,32 @@ def gen_questions(text, userid):
     # ^ response includes an id like eda433e6-37bb-11eb-b96f-acde48001122
     # add each question to db using add_question_row function and passing in the id above as textid parameter
 
+'''
 with open('question_generator/articles/innovate.txt') as f:
     text = f.read()
     print(text)
     gen_questions(text, 'ramisbahi')
+'''
 
 def gensession(textid):
     # select 10 questions with textid
-    questions = get_all_text_questions(textid)
+    questions_and_info = get_all_text_questions(textid)
+    questions = questions_and_info['questions']
+    textid = questions_and_info['textInformation']['id']
+    userid = 'ramisbahi'
+    sessionid = str(uuid.uuid1())
+    session_questions = random.sample(questions, min(len(questions) / 2, 10)) # half of questions or 10, whichever is less
+    questionids = []
+    for question in session_questions:
+        add_interaction_row(question['id'], sessionid)
+        questionids.append(question['id'])
+
+    add_session_row(sessionid, userid, textid, questionids)
+
+def availablesessions(userid):
+    #get_all_text
+    pass
+
 
 def answer(textid, questionid, useranswer):
     # select answer where id = question_id
