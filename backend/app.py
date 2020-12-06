@@ -24,7 +24,7 @@ def get_free_questions(text):
     types = ['free_response'] * len(questions)
     return questions, corrects, types
 
-def get_mc_questions(text):
+def get_mc_questions(url, text):
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     questions = get_questions(None,
         text,
@@ -39,7 +39,19 @@ def get_mc_questions(text):
                 corrects.append(answer['answer'])
                 break
     types = ["multiple_choice"] * len(questions)
+
+    textid = url
+
+    # insert into text: text_id, text, userid
+    # insert into questions: each generated id (autoinc), content, answer, 'multiple_choice', text_id, 5
+
+
     return questions, corrects, types
+
+
+def get_quiz(textid):
+    # select 10 questions with textid
+
 
 
 '''
