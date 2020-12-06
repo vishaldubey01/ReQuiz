@@ -32,8 +32,13 @@ const Profile = () => {
 
   return (
     <DashboardTemplate>
+      <div className="max-w-7xl mx-auto ">
+        <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
+      </div>
       <div>
-        <p>You're signed in. Email: {user.email}</p>
+        <p>You're signed in.</p>
+        <p>Email: {user.email}</p>
+        <p>User ID: {user.id}</p>
         <p
           style={{
             display: "inline-block",
