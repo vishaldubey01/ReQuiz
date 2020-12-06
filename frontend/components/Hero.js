@@ -373,11 +373,7 @@ export default function Hero() {
         </div>
         <div class="container mx-auto flex justify-center md:-mt-56 -mt-20 sm:-mt-40">
           <div class="relative sm:w-2/3 w-11/12">
-            <img
-              src="https://questo.ai/images/iPhone-XS-Portrait-Space-Gray.png"
-              alt=""
-              class="max-w-xs m-auto"
-            />
+            <img src="https://perfectib.com/demo.png" alt="" class="m-auto" />
           </div>
         </div>
       </div>
