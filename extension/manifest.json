@@ -4,6 +4,14 @@
     "description": "Get automated tests!",
     "permissions": ["storage", "declarativeContent", "activeTab"],
     "options_page": "options.html",
+    "content_scripts": [
+      {
+        "matches": [
+          "https://en.wikipedia.org/wiki/*"
+        ],
+        "js": ["content.js"]
+      }
+    ],
     "background": {
       "scripts": ["background.js"],
       "persistent": false

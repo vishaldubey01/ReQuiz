@@ -6,17 +6,6 @@
 
 let changeColor = document.getElementById("changeColor");
 
-var url = window.location.href;
-console.log("URL IS " + url);
-
-if (url.includes("https://en.wikipedia.org/")) {
-  var text = document.body
-    .querySelector(".mw-parser-output")
-    .innerText
-    .trim();
-}
-console.log(text);
-
 chrome.storage.sync.get("color", function (data) {
   changeColor.style.backgroundColor = data.color;
   changeColor.setAttribute("value", data.color);
@@ -26,7 +15,17 @@ function getText() {
   return document.body.innerText;
 }
 
+function login() {
+  userid = document.getElementById("userid").value;
+  return userid
+}
+
 changeColor.onclick = function (element) {
+  userid = login();
+  console.log('userid: '+userid);
+
+  
+
   let color = element.target.value;
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     chrome.tabs.executeScript(tabs[0].id, {
