@@ -5,6 +5,9 @@ import dotenv
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 import requests
+from pipelines import pipeline
+
+nlp = pipeline("question-generation", model="valhalla/t5-base-qg-hl", qg_format="prepend")
 
 load_dotenv()
 
@@ -34,6 +37,9 @@ def get_auth_token():
     x = requests.post(url, data = obj)
     print(x.json())
 
+def get_questions(text):
+    text = ''.join([i if ord(i) < 128 else ' ' for i in text])
+    return nlp(text)
 
 get_auth_token()
 
