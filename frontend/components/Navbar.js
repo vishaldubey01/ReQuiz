@@ -85,11 +85,13 @@ export default function Navbar({ logo }) {
                     Home
                   </a>
                 </Link>
-                <Link href="/dashboard">
-                  <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    Dashboard
-                  </a>
-                </Link>
+                {user && (
+                  <Link href="/dashboard">
+                    <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      Dashboard
+                    </a>
+                  </Link>
+                )}
                 <Link href="/about">
                   <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                     About
@@ -193,7 +195,7 @@ export default function Navbar({ logo }) {
                     aria-orientation="vertical"
                     aria-labelledby="user-menu"
                   >
-                    <Link href="profile">
+                    <Link href="/profile">
                       <a
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         role="menuitem"

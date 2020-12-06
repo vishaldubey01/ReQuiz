@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import Link from "next/link";
 import { useUser } from "../utils/auth/useUser";
+import DashboardTemplate from "../components/DashboardTemplate";
 
 const fetcher = (url, token) =>
   fetch(url, {
@@ -30,7 +31,7 @@ const Profile = () => {
   }
 
   return (
-    <div>
+    <DashboardTemplate>
       <div>
         <p>You're signed in. Email: {user.email}</p>
         <p
@@ -56,7 +57,7 @@ const Profile = () => {
       ) : (
         <div>Loading...</div>
       )}
-    </div>
+    </DashboardTemplate>
   );
 };
 
