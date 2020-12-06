@@ -139,7 +139,7 @@ def getsession(sessionid):
 def sessionhistory(userid):
     # select sessions with user id
     # select interactions with session id =
-    continue
+    pass
 
 
 # #test questions
