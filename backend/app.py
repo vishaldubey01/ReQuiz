@@ -19,12 +19,13 @@ def get_free_questions(text):
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     questions = nlp(text)
     corrects = []
+
     for question in questions:
         corrects.append(question['answer'].strip())
     types = ['free_response'] * len(questions)
     return questions, corrects, types
 
-def get_mc_questions(url, text):
+def get_mc_questions(text):
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     questions = get_questions(None,
         text,
@@ -40,19 +41,42 @@ def get_mc_questions(url, text):
                 break
     types = ["multiple_choice"] * len(questions)
 
-    textid = url
 
+
+    return questions, corrects, types
+
+@app.route('/gen_questions', methods=['GET', 'POST']) #allow both GET and POST requests
+def gen_questions(url, text):
+    mc_questions, mc_corrects, mc_types = get_mc_questions(text)
+    free_questions, free_corrects, free_types = get_free_questions(text)
+
+    textid = url
     # insert into text: text_id, text, userid
     # insert into questions: each generated id (autoinc), content, answer, 'multiple_choice', text_id, 5
 
 
     return questions, corrects, types
 
-
-def get_quiz(textid):
+def gensession(textid):
     # select 10 questions with textid
+    pass
 
+def answer(textid, questionid, useranswer):
+    # select answer where id = question_id
+    if answer == useranswer:
+        print('correct')
+    else:
+        print('false')
 
+def getsession(sessionid):
+    # select interactions with session id
+    # sort by id (ascending b/c serial)
+    pass
+
+def sessionhistory(userid):
+    # select sessions with user id
+    for session in sessions:
+        # select interactions with session id =
 
 '''
 test questions
