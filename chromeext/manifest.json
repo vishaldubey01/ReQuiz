@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+    "name": "Scrape articles",
+    "version": "0.1",
+    "content_scripts": [
+      {
+        "matches": [
+          "https://*.ebay.com/itm/*",
+          "https://en.wikipedia.org/wiki/*"
+
+        ],
+        "js": ["content.js"]
+      }
+    ],
+    "background": {
+      "scripts": ["background.js"]
+    },
+    "permissions": ["https://en.wikipedia.org/wiki/*"],
+    "browser_action": {
+      "default_icon": "article.png"
+    }
+  }
+  

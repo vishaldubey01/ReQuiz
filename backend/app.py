@@ -49,8 +49,22 @@ def get_mc_questions(text):
     return questions
 '''
 
-@app.route('/gen_questions', methods=['GET', 'POST']) #allow both GET and POST requests
-def gen_questions(text, title, userid):
+@app.route('/gen_questions', methods=['POST']) #allow both GET and POST requests
+def gen_questions():
+    field_vals = ['userid','text','title']
+    data = {}
+    if not request.json:
+        abort(404)
+    else:
+        for field in field_vals:
+            if field not in request.json:
+                abort(404)
+            else:
+                data[field] = request.json[field]
+    text = data['text']
+    userid = data['userid']
+    title = data['title']
+    
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
     mc_url = 'https://us-central1-duke-classes-285719.cloudfunctions.net/get_mc_questions'
     response = requests.post(mc_url, json={"text" : text})
