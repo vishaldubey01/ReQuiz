@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 import requests
 from pipelines import pipeline
+from question_generator.run_qg import get_questions
 
 nlp = pipeline("question-generation", model="valhalla/t5-base-qg-hl", qg_format="prepend")
 
@@ -37,11 +38,38 @@ def get_auth_token():
     x = requests.post(url, data = obj)
     print(x.json())
 
-def get_questions(text):
+def get_free_questions(text):
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
-    return nlp(text)
+    questions = nlp(text)
+    corrects = []
+    for question in questions:
+        corrects.append(question['answer'].strip())
+
+def get_mc_questions(text):
+    text = ''.join([i if ord(i) < 128 else ' ' for i in text])
+    questions = get_questions(None,
+        text,
+        num_questions=100,
+        answer_style='multiple_choice',
+        use_evaluator=True
+    )
+    corrects = []
+    for question in questions:
+        for answer in question['answer']:
+            if answer['correct']:
+                corrects.append(answer['answer'])
+                break
+    types = ["multiple_choice"] * len(questions)
+    return questions, corrects, types
 
 get_auth_token()
+
+with open('question_generator/articles/innovate.txt') as f:
+    text = f.read()
+    print()
+    print(get_free_questions(text))
+    print()
+    print(get_mc_questions(text))
 
 if __name__ == '__main__':
     app.run(debug=True)
