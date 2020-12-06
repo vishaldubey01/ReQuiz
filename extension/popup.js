@@ -5,6 +5,7 @@
 "use strict";
 
 let changeColor = document.getElementById("changeColor");
+let userid = document.getElementById("userid").value;
 
 chrome.storage.sync.get("color", function (data) {
   changeColor.style.backgroundColor = data.color;
@@ -16,20 +17,23 @@ function getText() {
 }
 
 function login() {
-  userid = document.getElementById("userid").value;
-  return userid
+  return userid;
 }
 
 changeColor.onclick = function (element) {
   userid = login();
-  console.log('userid: '+userid);
-
-  
+  console.log("userid: " + userid);
 
   let color = element.target.value;
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.executeScript(tabs[0].id, {
-      code: 'document.body.style.backgroundColor = "' + color + '";',
-    });
+    chrome.tabs.executeScript(
+      tab.id,
+      {
+        code: "var config = 1;",
+      },
+      function () {
+        chrome.tabs.executeScript(tab.id, { file: "content.js" });
+      }
+    );
   });
 };
