@@ -3,8 +3,10 @@ import Features from "../components/Features";
 import Footer from "../components/footer";
 import Hero from "../components/Hero";
 import Navbar from "../components/Navbar";
+var data = require("../data/questions.json");
 
 export default function Home() {
+  console.log(data);
   return (
     <div>
       <Head>

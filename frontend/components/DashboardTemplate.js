@@ -48,7 +48,7 @@ export default function DashboardTemplate({ children }) {
                   <div className="flex-shrink-0 flex items-center px-4">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+                      src="./logo.png"
                       alt="Workflow"
                     />
                   </div>
@@ -218,10 +218,10 @@ export default function DashboardTemplate({ children }) {
             <div className="flex flex-col w-64">
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex flex-col h-0 flex-1">
-                <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
+                <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900 justify-center">
                   <img
-                    className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+                    className="h-16 w-auto"
+                    src="./logo.png"
                     alt="Workflow"
                   />
                 </div>
