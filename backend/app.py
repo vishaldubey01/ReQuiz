@@ -44,6 +44,8 @@ def get_free_questions(text):
     corrects = []
     for question in questions:
         corrects.append(question['answer'].strip())
+    types = ['free_response'] * len(questions)
+    return questions, corrects, types
 
 def get_mc_questions(text):
     text = ''.join([i if ord(i) < 128 else ' ' for i in text])
@@ -64,12 +66,16 @@ def get_mc_questions(text):
 
 get_auth_token()
 
+
+'''
+test questions
 with open('question_generator/articles/innovate.txt') as f:
     text = f.read()
     print()
     print(get_free_questions(text))
     print()
     print(get_mc_questions(text))
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)
